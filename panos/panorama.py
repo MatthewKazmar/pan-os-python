@@ -287,6 +287,7 @@ class TemplateStack(VersionedPanObject):
         "network.IpsecTunnelIpv6ProxyId",
         "network.Layer2Subinterface",
         "network.Layer3Subinterface",
+        "panorama.DeviceVariables",
         "panorama.TemplateVariable",
     )
 
@@ -314,6 +315,18 @@ class TemplateStack(VersionedPanObject):
     def delete_similar(self):
         raise NotImplementedError("This is not supported for template stacks")
 
+class DeviceVariables(VersionedPanObject):
+    TEMPLATE_NATIVE = True
+    ROOT = Root.DEVICE
+    SUFFIX = ENTRY
+    CHILDTYPES = (
+        "panorama.TemplateVariable",
+    )        
+
+    def _setup(self):
+        # xpaths
+        self._xpaths.add_profile(value="/devices")
+        self._params = tuple()
 
 class TemplateVariable(VersionedPanObject):
     """Template or template stack variable.
@@ -363,6 +376,7 @@ class TemplateVariable(VersionedPanObject):
                 "interface",
                 "device-priority",
                 "device-id",
+                "as-number",
             ],
         )
 

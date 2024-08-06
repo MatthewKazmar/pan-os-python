@@ -279,6 +279,8 @@ class Firewall(PanDevice):
         super(Firewall, self)._save_system_info(system_info)
         self.content_version = system_info["system"]["app-version"]
         self.multi_vsys = system_info["system"]["multi-vsys"] == "on"
+        self.management_ip = system_info["system"]['ip-address']
+        self.hostname = system_info["system"]["hostname"]
 
     def element(self):
         if self.serial is None:
@@ -370,6 +372,12 @@ class Firewall(PanDevice):
         if self.vsys.startswith("vsys"):
             self.set_config_changed()
             self.xapi.delete(self._root_xpath_vsys(self.vsys), retry_on_peer=True)
+
+    def refresh(
+        self, running_config=False, refresh_children=True, exceptions=True, xml=None
+    ):
+        super(Firewall, self).refresh(running_config=running_config, refresh_children=refresh_children, exceptions=exceptions, xml=xml)
+        _ = self.refresh_system_info()
 
     def refreshall_from_xml(self, xml, refresh_children=False, variables=None):
         if len(xml) == 0:
